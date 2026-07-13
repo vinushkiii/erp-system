@@ -1,12 +1,20 @@
 <?php
+// Include database config
 require_once '../includes/config.php';
+
+// Connect to database
 $db = getDB();
 
+// Get search dates from URL parameters 
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
+
+// Array to hold report data
 $invoices = [];
 
+// Only run query if both search dates are provided
 if ($date_from && $date_to) {
+    // Prepare query to fetch overall invoice data with counts and totals within date range
     $stmt = $db->prepare("
         SELECT invoices.invoice_number, invoices.invoice_date,
                CONCAT(customers.first_name, ' ', customers.last_name) AS customer_name,
@@ -21,15 +29,20 @@ if ($date_from && $date_to) {
         GROUP BY invoices.id
         ORDER BY invoices.invoice_date DESC
     ");
+    // Execute query with filtered dates
     $stmt->execute([$date_from, $date_to]);
+    // Fetch all matching records
     $invoices = $stmt->fetchAll();
 }
 
+// Include layout header
 require_once '../includes/header.php';
 ?>
 
+<!-- Page title -->
 <h1 class="text-center">Invoice Report</h1>
 
+<!-- Date range search form using GET method -->
 <form method="GET" class="row g-3 align-items-end mx-auto mt-4 mb-4" style="max-width: 600px;">
     <div class="col-auto">
         <label class="form-label">From</label>
@@ -44,6 +57,7 @@ require_once '../includes/header.php';
     </div>
 </form>
 
+<?php // If a search was performed, display the summary table ?>
 <?php if ($date_from && $date_to): ?>
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
@@ -53,8 +67,10 @@ require_once '../includes/header.php';
             </tr>
         </thead>
         <tbody>
+            <?php // Loop through each invoice summary record ?>
             <?php foreach ($invoices as $inv): ?>
             <tr>
+                <!-- Output summary data rows with formatted amounts -->
                 <td><?= $inv['invoice_number'] ?></td>
                 <td><?= $inv['invoice_date'] ?></td>
                 <td><?= $inv['customer_name'] ?></td>
@@ -66,7 +82,9 @@ require_once '../includes/header.php';
         </tbody>
     </table>
 <?php else: ?>
+    <!-- Prompt user to select dates if no search has run yet -->
     <p class="text-center text-muted">Select a date range and click Search.</p>
 <?php endif; ?>
 
+<?php // Include layout footer ?>
 <?php require_once '../includes/footer.php'; ?>
