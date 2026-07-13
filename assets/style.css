@@ -1,0 +1,33 @@
+/* Custom styles on top of Bootstrap */
+
+body {
+    background-color: #f4f6f9;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.table th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr:hover {
+    background-color: #eef2ff;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.btn {
+    border-radius: 6px;
+}
+
+h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
